@@ -1,9 +1,16 @@
 {
   "private": true,
-  "workspaces": ["packages/*"],
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "start": "lerna start"
+  },
   "devDependencies": {
     "@swc/cli": "^0.1.50",
     "@swc/core": "^1.2.88",
+    "lerna": "^4.0.0",
     "typescript": "^4.4.3"
-  }
+  },
+  "name": "messenger"
 }
