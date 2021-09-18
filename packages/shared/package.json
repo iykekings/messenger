@@ -1,0 +1,12 @@
+{
+    "name": "@chat/shared",
+    "version": "1.0.0",
+    "description": "shared lib",
+    "main": "lib/index.js",
+    "typings": "lib/index.d.ts",
+    "license": "MIT",
+    "author": "Ikechukwu Eze",
+    "scripts": {
+      "build": "rm -rf ./lib && npx swc ./src -d ./lib && npx tsc -d --emitDeclarationOnly"
+    }
+  }

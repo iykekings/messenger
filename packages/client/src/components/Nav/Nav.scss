@@ -1,0 +1,27 @@
+nav.main-navbar {
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem 5vw;
+  width: 100%;
+  h2 {
+    a {
+      color: black;
+      text-decoration: none;
+    }
+  }
+}
+ul {
+  display: flex;
+  align-items: center;
+  list-style: none;
+  gap: 1.5rem;
+
+  li a {
+    text-decoration: none;
+    color: black;
+    &.active {
+      color: rgb(7, 80, 190);
+      border-bottom: 2px solid black;
+    }
+  }
+}
