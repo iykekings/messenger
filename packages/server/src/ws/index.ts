@@ -3,16 +3,17 @@ import type {
   Socket,
 } from 'socket.io';
 
-import { ChatType } from '@chat/shared';
-
 import {
+  ClientEventMaps,
   Message,
-  User,
-} from '../interface';
+  ServerEventMaps,
+} from '@chat/shared';
+
+import { User } from '../interface';
 
 interface HandleSocketsProps {
-  server: Server;
-  socket: Socket;
+  server: Server<ClientEventMaps, ServerEventMaps>;
+  socket: Socket<ClientEventMaps, ServerEventMaps>;
   users: User[];
   usersSockets: Socket[];
 }
@@ -25,26 +26,31 @@ export function handleSockets(options: HandleSocketsProps) {
 
 function handleJoins(options: HandleSocketsProps) {
   const { socket, users } = options;
-  socket.on(ChatType.USER_JOIN, (name: string) => {
+  socket.on("joinChat", (name: string) => {
     users.push({ name, id: socket.id });
     // for (const adminSocket of ADMINSOCKETS) {
     //   adminSocket.join(socket.id);
     // }
-    socket.broadcast.to(socket.id).emit(ChatType.USER_JOIN, {
+    socket.broadcast.to(socket.id).emit("newUser", {
       sender: name,
       time: new Date(),
       uuid: socket.id,
+      type: "join",
+      sameUser: false,
+      message: "",
     });
   });
 }
 
 function handleMessages(options: HandleSocketsProps) {
   const { server, socket } = options;
-  socket.on(ChatType.SEND_MESSAGE, (msg: Message) => {
-    server.to(socket.id).emit(ChatType.SEND_MESSAGE, {
+  socket.on("sendMessage", (msg: Message) => {
+    server.to(socket.id).emit("recieveMessage", {
       ...msg,
       uuid: socket.id,
       time: new Date(),
+      type: "message",
+      sameUser: msg.sender === socket.id,
     });
   });
 }
@@ -54,10 +60,13 @@ function handleDisConnection(options: HandleSocketsProps) {
   socket.on("disconnect", () => {
     const index = users.findIndex((u) => u.id === socket.id);
     if (index >= 0) {
-      server.to(socket.id).emit(ChatType.USER_LEAVE_CHAT, {
+      server.to(socket.id).emit("userLeft", {
         sender: users[index].name,
         uuid: socket.id,
         time: new Date(),
+        type: "disconnect",
+        sameUser: false,
+        message: "",
       });
       const i = usersSockets.indexOf(socket);
       usersSockets.splice(i, 1);

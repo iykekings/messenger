@@ -30,7 +30,7 @@ const Admin = () => {
   };
 
   useEffect(() => {
-    socket.on(ChatType.GET_ALL_USERS, ({ users }: { users: User[] }) => {
+    socket.on(ChatType.ALL_USERS, ({ users }: { users: User[] }) => {
       setUsers(users);
       if (!active.id && users.length) {
         setActive(users[0]);

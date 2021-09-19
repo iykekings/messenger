@@ -7,6 +7,6 @@
     "license": "MIT",
     "author": "Ikechukwu Eze",
     "scripts": {
-      "build": "rm -rf ./lib && npx swc ./src -d ./lib && npx tsc -d --emitDeclarationOnly"
+      "build": "rm -rf ./lib && npx swc ./src -d ./lib && npx tsc"
     }
   }

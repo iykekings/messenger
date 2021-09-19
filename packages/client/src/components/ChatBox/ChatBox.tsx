@@ -18,13 +18,15 @@ const ChatBox = () => {
   const [messages, setMessages] = useState<MessageProps[]>([]);
   const [name, setName] = useState("");
   function updateMessage(msg: MessageProps) {
-    setMessages((pre) => [
-      ...pre,
-      {
-        ...msg,
-        time: new Date(msg.time),
-      },
-    ]);
+    if (msg.time) {
+      setMessages((pre) => [
+        ...pre,
+        {
+          ...msg,
+          time: new Date(msg.time!),
+        },
+      ]);
+    }
   }
   useEffect(() => {
     socket.on(ChatType.SEND_MESSAGE, (msg: MessageProps) => {
@@ -53,7 +55,7 @@ const ChatBox = () => {
   const [text, setText] = useState("");
   const [hide, setHide] = useState(false);
 
-  const spacer = useRef<HTMLDivElement>();
+  const spacer = useRef<HTMLDivElement>(null);
   const handleSubmit = (e: Event) => {
     e.preventDefault();
     if (!hide) {
