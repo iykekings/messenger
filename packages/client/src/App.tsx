@@ -6,7 +6,6 @@ import { Router } from 'preact-router';
 
 import { Nav } from './components/Nav/Nav';
 import { SocketProvider } from './hooks';
-import Admin from './pages/Admin';
 import User from './pages/User';
 
 const App = () => {
@@ -34,7 +33,6 @@ const App = () => {
         >
           <Router>
             <User path="/" />
-            <Admin />
           </Router>
         </main>
       </div>

@@ -8,61 +8,47 @@ import {
 } from 'preact/hooks';
 import { IoIosSend } from 'react-icons/io';
 
-import { ChatType } from '../../../../shared';
+import { ServerMessage } from '@chat/shared';
+
 import { useSocket } from '../../hooks';
-import { MessageProps } from '../../interfaces';
 import Message from '../Message/Message';
 
 const ChatBox = () => {
   const socket = useSocket();
-  const [messages, setMessages] = useState<MessageProps[]>([]);
+  const spacer = useRef<HTMLDivElement>(null);
+  const [messages, setMessages] = useState<ServerMessage[]>([]);
   const [name, setName] = useState("");
-  function updateMessage(msg: MessageProps) {
-    if (msg.time) {
-      setMessages((pre) => [
-        ...pre,
-        {
-          ...msg,
-          time: new Date(msg.time!),
-        },
-      ]);
-    }
-  }
-  useEffect(() => {
-    socket.on(ChatType.SEND_MESSAGE, (msg: MessageProps) => {
-      updateMessage(msg);
-      spacer.current?.scrollIntoView();
-    });
-    socket.on(ChatType.USER_LEAVE_CHAT, (msg: MessageProps) => {
-      updateMessage({
-        ...msg,
-        message: "",
-        type: "disconnect",
-      });
-      spacer.current?.scrollIntoView();
-    });
-
-    socket.on(ChatType.USER_JOIN, (msg: MessageProps) => {
-      updateMessage({
-        ...msg,
-        message: "",
-        type: "join",
-      });
-      spacer.current?.scrollIntoView();
-    });
-  }, []);
 
   const [text, setText] = useState("");
   const [hide, setHide] = useState(false);
 
-  const spacer = useRef<HTMLDivElement>(null);
+  function updateMessages(msg: ServerMessage) {
+    setMessages((pre) => [...pre, msg]);
+  }
+
+  useEffect(() => {
+    socket.on("recieveMessage", (msg: ServerMessage) => {
+      updateMessages(msg);
+      spacer.current?.scrollIntoView();
+    });
+    socket.on("userLeft", (msg: ServerMessage) => {
+      updateMessages(msg);
+      spacer.current?.scrollIntoView();
+    });
+
+    socket.on("newUser", (msg: ServerMessage) => {
+      updateMessages(msg);
+      spacer.current?.scrollIntoView();
+    });
+  }, []);
+
   const handleSubmit = (e: Event) => {
     e.preventDefault();
     if (!hide) {
       setHide(true);
-      socket.emit(ChatType.USER_JOIN, name);
+      socket.emit("joinChat", name);
     } else {
-      socket.emit(ChatType.SEND_MESSAGE, { message: text, sender: name });
+      socket.emit("sendMessage", { message: text, sender: name });
       spacer.current?.scrollIntoView();
       setText("");
     }

@@ -6,11 +6,13 @@ export interface User {
 export interface ClientEventMaps {
   sendMessage: (msg: Message) => void;
   joinChat: (name: string) => void;
-  leaveChat: (id: string) => void;
+  typing: (id: string) => void;
+  stoppedTyping: (id: string) => void;
 }
 export interface ServerEventMaps {
   recieveMessage: (msg: ServerMessage) => void;
   newUser: (user: ServerMessage) => void;
+  allUsers: (users: User[]) => void;
   userLeft: (user: ServerMessage) => void;
 }
 export interface AllEventMaps extends ServerEventMaps, ClientEventMaps {}

@@ -5,12 +5,12 @@
   "license": "MIT",
   "scripts": {
     "build": "npx swc ./src -d ./dist",
-    "start": "node ./dist/main.js",
-    "prestart": "npm run build",
-    "dev": "nodemon --watch src -e ts --exec \"npm run build && node ./dist/main.js\""
+    "start": "nodemon --watch src -e ts --exec \"npm run build && node ./dist/main.js\"",
+    "start:prod": "npm run build && node ./dist/main.js"
   },
   "dependencies": {
     "@chat/shared": "1.0.0",
+    "cors": "^2.8.5",
     "express": "^4.17.1",
     "socket.io": "^4.2.0"
   },

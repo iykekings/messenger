@@ -5,11 +5,11 @@ import type {
 
 import {
   ClientEventMaps,
+  defaultMessage,
   Message,
   ServerEventMaps,
+  User,
 } from '@chat/shared';
-
-import { User } from '../interface';
 
 interface HandleSocketsProps {
   server: Server<ClientEventMaps, ServerEventMaps>;
@@ -25,20 +25,16 @@ export function handleSockets(options: HandleSocketsProps) {
 }
 
 function handleJoins(options: HandleSocketsProps) {
-  const { socket, users } = options;
+  const { socket, server, users } = options;
   socket.on("joinChat", (name: string) => {
-    users.push({ name, id: socket.id });
-    // for (const adminSocket of ADMINSOCKETS) {
-    //   adminSocket.join(socket.id);
-    // }
+    users.push({ name, uuid: socket.id });
     socket.broadcast.to(socket.id).emit("newUser", {
       sender: name,
-      time: new Date(),
       uuid: socket.id,
       type: "join",
-      sameUser: false,
-      message: "",
+      ...defaultMessage(),
     });
+    server.to(socket.id).emit("allUsers", users);
   });
 }
 
@@ -58,15 +54,13 @@ function handleMessages(options: HandleSocketsProps) {
 function handleDisConnection(options: HandleSocketsProps) {
   const { server, socket, users, usersSockets } = options;
   socket.on("disconnect", () => {
-    const index = users.findIndex((u) => u.id === socket.id);
+    const index = users.findIndex((u) => u.uuid === socket.id);
     if (index >= 0) {
       server.to(socket.id).emit("userLeft", {
         sender: users[index].name,
         uuid: socket.id,
-        time: new Date(),
         type: "disconnect",
-        sameUser: false,
-        message: "",
+        ...defaultMessage(),
       });
       const i = usersSockets.indexOf(socket);
       usersSockets.splice(i, 1);

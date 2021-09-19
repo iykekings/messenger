@@ -12,7 +12,8 @@
     "transform": {
       "react": {
         "pragma": "h",
-        "pragmaFrag": "Fragment"
+        "pragmaFrag": "Fragment",
+        "refresh": true
       }
     },
     "target": "es2015"
