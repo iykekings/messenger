@@ -6,6 +6,7 @@ To Run:
 
 - Have NodeJS installed (>= v12)
 - Have yarn installed with `npm i -g yarn`
+- Run `yarn install` to install dependcencies and sync packages
 - Run `yarn start`
   - This compiles the shared package in watch mode
   - Starts Websocket/API server at `http://localhost:4005`
