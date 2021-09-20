@@ -5,6 +5,7 @@ export interface User {
 
 export interface ClientEventMaps {
   sendMessage: (msg: Message) => void;
+  sendMessageToUser: (mgs: Message, to: string) => void;
   joinChat: (chatId: string) => void;
   join: (name: string) => void;
   typing: (id: string) => void;
@@ -15,6 +16,8 @@ export interface ServerEventMaps {
   newUser: (user: ServerMessage) => void;
   allUsers: (users: User[]) => void;
   userLeft: (user: ServerMessage) => void;
+  userTyping: (id: string) => void;
+  userStoppedTyping: (id: string) => void;
 }
 export interface AllEventMaps extends ServerEventMaps, ClientEventMaps {}
 
@@ -25,13 +28,7 @@ export interface Message {
 export interface ServerMessage extends Message {
   uuid: string;
   time: Date;
-  type:
-    | "disconnect"
-    | "typing"
-    | "message"
-    | "join"
-    | "left"
-    | "stopped-typing";
+  type: "disconnect" | "message" | "join" | "left";
   sameUser: boolean;
 }
 
