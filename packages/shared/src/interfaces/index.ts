@@ -5,7 +5,8 @@ export interface User {
 
 export interface ClientEventMaps {
   sendMessage: (msg: Message) => void;
-  joinChat: (name: string) => void;
+  joinChat: (chatId: string) => void;
+  join: (name: string) => void;
   typing: (id: string) => void;
   stoppedTyping: (id: string) => void;
 }

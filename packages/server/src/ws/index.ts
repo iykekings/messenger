@@ -22,19 +22,29 @@ export function handleSockets(options: HandleSocketsProps) {
   handleJoins(options);
   handleMessages(options);
   handleDisConnection(options);
+  handleJoinChat(options);
 }
 
 function handleJoins(options: HandleSocketsProps) {
   const { socket, server, users } = options;
-  socket.on("joinChat", (name: string) => {
+  socket.on("join", (name: string) => {
     users.push({ name, uuid: socket.id });
-    socket.broadcast.to(socket.id).emit("newUser", {
+    server.to(socket.id).emit("allUsers", users);
+  });
+}
+
+function handleJoinChat(options: HandleSocketsProps) {
+  const { socket, server, users } = options;
+  socket.on("joinChat", (chatId: string) => {
+    const name = users.find((u) => u.uuid === socket.id)?.name!;
+    if (!users.find((u) => u.uuid === chatId) && !name) return;
+    socket.join(chatId);
+    server.to(chatId).emit("newUser", {
       sender: name,
       uuid: socket.id,
       type: "join",
       ...defaultMessage(),
     });
-    server.to(socket.id).emit("allUsers", users);
   });
 }
 
