@@ -2,13 +2,26 @@ import './Message.scss';
 
 import { formatDistance } from 'date-fns';
 import { h } from 'preact';
+import {
+  useEffect,
+  useState,
+} from 'preact/hooks';
 
 import { ServerMessage } from '@chat/shared';
 
-function from(date: Date) {
+function fromTime(date: Date) {
   return formatDistance(new Date(), new Date(date), { includeSeconds: true });
 }
-const Message = (props: ServerMessage) => {
+const Message = (props: ServerMessage & { sameUser: boolean }) => {
+  const [from, setFrom] = useState("");
+
+  useEffect(() => {
+    const interval = setInterval(() => setFrom(fromTime(props.time)), 1000);
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
+
   if (props.type === "disconnect") {
     return (
       <article className="chat-message notification">
@@ -36,7 +49,7 @@ const Message = (props: ServerMessage) => {
       >
         <span className="chat-message-sender">{props.sender}</span>
         <p className="chat-message-body">{props.message}</p>
-        <span className="chat-message-time"> {from(props.time)}</span>
+        <span className="chat-message-time"> {from}</span>
       </div>
     </article>
   );

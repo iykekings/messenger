@@ -4,20 +4,19 @@ export interface User {
 }
 
 export interface ClientEventMaps {
-  sendMessage: (msg: Message) => void;
   sendMessageToUser: (mgs: Message, to: string) => void;
-  joinChat: (chatId: string) => void;
   join: (name: string) => void;
   typing: (id: string) => void;
   stoppedTyping: (id: string) => void;
 }
 export interface ServerEventMaps {
   recieveMessage: (msg: ServerMessage) => void;
-  newUser: (user: ServerMessage) => void;
+  newUser: (user: User) => void;
+  accountCreated: (user: User) => void;
   allUsers: (users: User[]) => void;
   userLeft: (user: ServerMessage) => void;
-  userTyping: (id: string) => void;
-  userStoppedTyping: (id: string) => void;
+  userTyping: (chatId: string) => void;
+  userStoppedTyping: (chatId: string) => void;
 }
 export interface AllEventMaps extends ServerEventMaps, ClientEventMaps {}
 
@@ -26,19 +25,15 @@ export interface Message {
   message: string;
 }
 export interface ServerMessage extends Message {
-  uuid: string;
   time: Date;
+  to: string;
+  from: string;
   type: "disconnect" | "message" | "join" | "left";
-  sameUser: boolean;
 }
 
-export function defaultMessage(): Pick<
-  ServerMessage,
-  "message" | "time" | "sameUser"
-> {
+export function defaultMessage(): Pick<ServerMessage, "message" | "time"> {
   return {
     message: "",
     time: new Date(),
-    sameUser: false,
   };
 }

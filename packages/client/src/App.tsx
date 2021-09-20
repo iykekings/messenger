@@ -1,3 +1,5 @@
+import 'preact/debug';
+
 import {
   h,
   render,

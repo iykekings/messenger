@@ -7,6 +7,10 @@
     "license": "MIT",
     "author": "Ikechukwu Eze",
     "scripts": {
-      "build": "rm -rf ./lib && npx swc ./src -d ./lib && npx tsc"
+      "build": "rm -rf ./lib && npx swc ./src -d ./lib && npx tsc",
+      "start": "nodemon --watch src -e ts --exec \"npm run build\""
+    },
+    "devDependencies": {
+      "nodemon": "^2.0.12"
     }
   }

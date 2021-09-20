@@ -9,19 +9,19 @@ nav.main-navbar {
       text-decoration: none;
     }
   }
-}
-ul {
-  display: flex;
-  align-items: center;
-  list-style: none;
-  gap: 1.5rem;
+  ul {
+    display: flex;
+    align-items: center;
+    list-style: none;
+    gap: 1.5rem;
 
-  li a {
-    text-decoration: none;
-    color: black;
-    &.active {
-      color: rgb(7, 80, 190);
-      border-bottom: 2px solid black;
+    li a {
+      text-decoration: none;
+      color: black;
+      &.active {
+        color: rgb(7, 80, 190);
+        border-bottom: 2px solid black;
+      }
     }
   }
 }

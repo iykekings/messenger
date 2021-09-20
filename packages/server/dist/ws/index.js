@@ -35,51 +35,85 @@ function _objectSpread(target) {
 }
 function handleSockets(options) {
     handleJoins(options);
-    handleMessages(options);
     handleDisConnection(options);
+    handleMessagesToUser(options);
+    handleTyping(options);
+    handleStopTyping(options);
 }
 function handleJoins(options) {
     var socket = options.socket, server = options.server, users = options.users;
-    socket.on("joinChat", function(name) {
+    socket.on("join", function(name) {
         users.push({
             name: name,
             uuid: socket.id
         });
-        socket.broadcast.to(socket.id).emit("newUser", _objectSpread({
-            sender: name,
-            uuid: socket.id,
-            type: "join"
-        }, (0, _shared).defaultMessage()));
-        server.to(socket.id).emit("allUsers", users);
+        server.to(socket.id).emit("accountCreated", {
+            name: name,
+            uuid: socket.id
+        });
+        server.emit("allUsers", users);
     });
 }
-function handleMessages(options) {
-    var server = options.server, socket = options.socket;
-    socket.on("sendMessage", function(msg) {
-        server.to(socket.id).emit("recieveMessage", _objectSpread({
+function handleMessagesToUser(options) {
+    var server = options.server, socket = options.socket, users = options.users;
+    socket.on("sendMessageToUser", function(msg, id) {
+        if (!users.find(function(u) {
+            return u.uuid === id;
+        })) return;
+        server.to(id).to(socket.id).emit("recieveMessage", _objectSpread({
         }, msg, {
-            uuid: socket.id,
-            time: new Date(),
+            from: socket.id,
+            to: id,
             type: "message",
-            sameUser: msg.sender === socket.id
+            time: new Date()
         }));
     });
 }
 function handleDisConnection(options) {
-    var server = options.server, socket = options.socket, users = options.users, usersSockets = options.usersSockets;
+    var socket = options.socket, users = options.users, usersSockets = options.usersSockets;
     socket.on("disconnect", function() {
         var index = users.findIndex(function(u) {
             return u.uuid === socket.id;
         });
         if (index >= 0) {
-            server.to(socket.id).emit("userLeft", _objectSpread({
+            socket.broadcast.emit("userLeft", _objectSpread({
                 sender: users[index].name,
-                uuid: socket.id,
+                from: socket.id,
+                to: "all",
                 type: "disconnect"
             }, (0, _shared).defaultMessage()));
             var i = usersSockets.indexOf(socket);
             usersSockets.splice(i, 1);
             users.splice(index, 1);
+            socket.broadcast.emit("allUsers", users);
         }
+    });
+}
+function handleTyping(options) {
+    var server = options.server, socket = options.socket, users = options.users;
+    socket.on("typing", function(id) {
+        var ref, ref1;
+        var sender = (ref = users.find(function(u) {
+            return u.uuid === socket.id;
+        })) === null || ref === void 0 ? void 0 : ref.name;
+        var receiver = (ref1 = users.find(function(u) {
+            return u.uuid === id;
+        })) === null || ref1 === void 0 ? void 0 : ref1.uuid;
+        if (!receiver || !sender) return;
+        server.to(id).emit("userTyping", socket.id);
+    });
+}
+function handleStopTyping(options) {
+    var server = options.server, socket = options.socket, users = options.users;
+    socket.on("stoppedTyping", function(id) {
+        var ref, ref1;
+        var sender = (ref = users.find(function(u) {
+            return u.uuid === socket.id;
+        })) === null || ref === void 0 ? void 0 : ref.name;
+        var receiver = (ref1 = users.find(function(u) {
+            return u.uuid === id;
+        })) === null || ref1 === void 0 ? void 0 : ref1.uuid;
+        if (!receiver || !sender) return;
+        server.to(id).emit("userStoppedTyping", socket.id);
     });
 }

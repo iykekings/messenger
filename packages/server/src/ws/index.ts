@@ -20,9 +20,7 @@ interface HandleSocketsProps {
 
 export function handleSockets(options: HandleSocketsProps) {
   handleJoins(options);
-  handleMessages(options);
   handleDisConnection(options);
-  handleJoinChat(options);
   handleMessagesToUser(options);
   handleTyping(options);
   handleStopTyping(options);
@@ -32,38 +30,8 @@ function handleJoins(options: HandleSocketsProps) {
   const { socket, server, users } = options;
   socket.on("join", (name: string) => {
     users.push({ name, uuid: socket.id });
+    server.to(socket.id).emit("accountCreated", { name, uuid: socket.id });
     server.emit("allUsers", users);
-  });
-}
-
-// Not important...used for groups/rooms
-function handleJoinChat(options: HandleSocketsProps) {
-  const { socket, server, users } = options;
-  socket.on("joinChat", (chatId: string) => {
-    const name = users.find((u) => u.uuid === socket.id)?.name!;
-    if (!users.find((u) => u.uuid === chatId) && !name) return;
-    socket.join(chatId);
-    server.to(chatId).emit("newUser", {
-      sender: name,
-      uuid: socket.id,
-      type: "join",
-      ...defaultMessage(),
-    });
-  });
-}
-
-// Not important, since we don't want to send messages to everyone
-//  Maybe for admins
-function handleMessages(options: HandleSocketsProps) {
-  const { server, socket } = options;
-  socket.on("sendMessage", (msg: Message) => {
-    server.to(socket.id).emit("recieveMessage", {
-      ...msg,
-      uuid: socket.id,
-      time: new Date(),
-      type: "message",
-      sameUser: msg.sender === socket.id,
-    });
   });
 }
 
@@ -71,12 +39,16 @@ function handleMessagesToUser(options: HandleSocketsProps) {
   const { server, socket, users } = options;
   socket.on("sendMessageToUser", (msg: Message, id: string) => {
     if (!users.find((u) => u.uuid === id)) return;
-    server.to(id).emit("recieveMessage", {
-      ...defaultMessage(),
-      ...msg,
-      uuid: socket.id,
-      type: "message",
-    });
+    server
+      .to(id)
+      .to(socket.id)
+      .emit("recieveMessage", {
+        ...msg,
+        from: socket.id,
+        to: id,
+        type: "message",
+        time: new Date(),
+      });
   });
 }
 
@@ -87,7 +59,8 @@ function handleDisConnection(options: HandleSocketsProps) {
     if (index >= 0) {
       socket.broadcast.emit("userLeft", {
         sender: users[index].name,
-        uuid: socket.id,
+        from: socket.id,
+        to: "all",
         type: "disconnect",
         ...defaultMessage(),
       });

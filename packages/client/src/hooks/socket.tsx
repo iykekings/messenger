@@ -24,6 +24,7 @@ const socket: Socket<ServerEventMaps, ClientEventMaps> = io(
 
 interface ISocketContext {
   users: User[];
+  auth: User;
   usersTyping: Record<string, boolean>;
   messages: ServerMessage[];
   join: (name: string) => void;
@@ -35,6 +36,7 @@ interface ISocketContext {
 export const SocketContext = createContext<ISocketContext>({
   users: [],
   usersTyping: {},
+  auth: { uuid: "", name: "" },
   messages: [],
   join: () => {},
   typing: () => {},
@@ -44,11 +46,13 @@ export const SocketContext = createContext<ISocketContext>({
 
 export const SocketProvider = ({ children }: { children: JSX.Element }) => {
   const [users, setUsers] = useState<User[]>([]);
+  const [auth, setAuth] = useState<User>({ uuid: "", name: "" });
   const [usersTyping, setUsersTyping] = useState<Record<string, boolean>>({});
   const [messages, setMessages] = useState<ServerMessage[]>([]);
 
   const value = {
     users,
+    auth,
     messages,
     usersTyping,
     join: (name: string) => {
@@ -67,7 +71,10 @@ export const SocketProvider = ({ children }: { children: JSX.Element }) => {
 
   useEffect(() => {
     socket.on("allUsers", (newUsers) => setUsers(newUsers));
-    socket.on("recieveMessage", (msg) => setMessages([...messages, msg]));
+    socket.on("recieveMessage", (msg) =>
+      setMessages((preMsgs) => [...preMsgs, msg])
+    );
+    socket.on("accountCreated", (user) => setAuth(user));
     socket.on("userTyping", (id) => {
       setUsersTyping((pre) => {
         pre[id] = true;
@@ -80,7 +87,7 @@ export const SocketProvider = ({ children }: { children: JSX.Element }) => {
         return pre;
       });
     });
-    socket.on("userLeft", (msg) => setMessages([...messages, msg]));
+    socket.on("userLeft", (msg) => setMessages((preMsgs) => [...preMsgs, msg]));
   }, []);
 
   return (
