@@ -14,7 +14,7 @@ const UserList: FunctionComponent<{
 }> = ({ users, changeChat, activeChatId }) => {
   return (
     <div>
-      <ul>
+      <ul class="users-list">
         {users.map((user) => (
           <User
             user={user}
@@ -33,12 +33,10 @@ const User: FunctionComponent<{
   isActive: boolean;
 }> = ({ user, changeChat, isActive }) => {
   return (
-    <div
-      onClick={() => changeChat(user.uuid)}
-      style={{ border: isActive ? "2px white solid" : "" }}
-    >
+    <li onClick={() => changeChat(user.uuid)} class={isActive ? "active" : ""}>
+      <span>{user.name[0].toUpperCase()}</span>
       {user.name}
-    </div>
+    </li>
   );
 };
 

@@ -13,7 +13,7 @@ function fromTime(date: Date) {
   return formatDistance(new Date(), new Date(date), { includeSeconds: true });
 }
 const Message = (props: ServerMessage & { sameUser: boolean }) => {
-  const [from, setFrom] = useState("");
+  const [from, setFrom] = useState("now");
 
   useEffect(() => {
     const interval = setInterval(() => setFrom(fromTime(props.time)), 1000);
@@ -49,7 +49,7 @@ const Message = (props: ServerMessage & { sameUser: boolean }) => {
       >
         <span className="chat-message-sender">{props.sender}</span>
         <p className="chat-message-body">{props.message}</p>
-        <span className="chat-message-time"> {from}</span>
+        <span className="chat-message-time">{from}</span>
       </div>
     </article>
   );

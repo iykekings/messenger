@@ -24,7 +24,7 @@
 
     &::after {
       width: 60px;
-      content: '';
+      content: "";
       position: absolute;
       height: 12px;
       background: inherit;
@@ -46,6 +46,9 @@
       color: grey;
       margin-top: 10px;
       float: right;
+    }
+    .chat-message-body {
+      white-space: pre-line;
     }
     .chat-message-sender {
       font-style: italic;

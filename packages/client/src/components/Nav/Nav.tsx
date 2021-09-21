@@ -11,16 +11,6 @@ export function Nav() {
           <i>Cognite</i> Messenger
         </Link>
       </h2>
-      <ul>
-        <li>
-          <Link activeClassName="active" href="/">
-            Chat
-          </Link>
-        </li>
-        <li>About</li>
-        <li>Team</li>
-        <li>Projects</li>
-      </ul>
     </nav>
   );
 }

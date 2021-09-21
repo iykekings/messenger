@@ -15,13 +15,17 @@ import UserList from '../UserList/UserList';
 
 const ChatBox = () => {
   const { messages, join, sendMessageToUser, users, auth } = useSocket();
-  const [currentChatId, setCurrentChatId] = useState<string>(users[0]?.name);
+  const [currentChatId, setCurrentChatId] = useState<string>(users[0]?.uuid);
 
   const chatMessages = useMemo(() => {
     return messages.filter(
       (m) => m.from === currentChatId || m.to === currentChatId
     );
   }, [messages, currentChatId]);
+
+  const currentChat = useMemo(() => {
+    return users.find((u) => u.uuid === currentChatId);
+  }, [currentChatId]);
 
   const usersList = useMemo(() => {
     if (!auth.uuid) return [];
@@ -31,11 +35,16 @@ const ChatBox = () => {
   const spacer = useRef<HTMLDivElement>(null);
   const [name, setName] = useState("");
   const [text, setText] = useState("");
-  const [hide, setHide] = useState(false);
 
   useEffect(() => {
     spacer.current?.scrollIntoView();
   }, [messages]);
+
+  useEffect(() => {
+    if (!currentChatId) {
+      setCurrentChatId(usersList[0]?.uuid);
+    }
+  }, [usersList]);
 
   const handleSubmit = (e: Event) => {
     e.preventDefault();
@@ -51,6 +60,11 @@ const ChatBox = () => {
     <main id="chatview">
       <aside>
         <h3>Contacts</h3>
+        {!usersList.length && (
+          <p>
+            <i>Contacts empty</i>
+          </p>
+        )}
         <UserList
           activeChatId={currentChatId}
           users={usersList}
@@ -58,6 +72,13 @@ const ChatBox = () => {
         />
       </aside>
       <div id="chatbox">
+        {auth.uuid && (
+          <h4>
+            {currentChat
+              ? `Chat with ${currentChat?.name}`
+              : "No chat selected"}
+          </h4>
+        )}
         <div className="chatbox-messages">
           {chatMessages.map((m, i) => (
             <Message {...m} sameUser={m.from === auth.uuid} key={i} />

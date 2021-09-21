@@ -5,7 +5,12 @@
   & > aside {
     flex: 0 0 300px;
     height: 100%;
-    border-right: 2px solid white;
+    padding: 1rem 0;
+    box-shadow: 4px 0px 4px 0px #0404052e;
+    & > h3,
+    & > p {
+      text-align: center;
+    }
   }
 }
 #chatbox {
@@ -15,6 +20,11 @@
   display: flex;
   flex: 1;
   flex-direction: column;
+  & > h4 {
+    text-align: center;
+    background: #00000026;
+    padding: 14px;
+  }
 
   h1.title {
     text-align: center;
