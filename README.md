@@ -28,3 +28,7 @@ Features:
 - Frontend under 125KB
 - Well typed socket servers and clients on both FE and BE
 - Super fast compilation/recompilation times
+
+Screenshot
+
+<img width="901" alt="Screenshot 2021-09-21 at 00 37 03" src="https://user-images.githubusercontent.com/22247592/134092879-18bb3d5b-462d-4afd-9223-3f77e86fcf90.png">
