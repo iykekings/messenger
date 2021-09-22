@@ -31,4 +31,6 @@ Features:
 
 Screenshot
 
-<img width="901" alt="Screenshot 2021-09-21 at 00 37 03" src="https://user-images.githubusercontent.com/22247592/134092879-18bb3d5b-462d-4afd-9223-3f77e86fcf90.png">
+<img width="833" alt="Screenshot 2021-09-22 at 07 48 45" src="https://user-images.githubusercontent.com/22247592/134296408-2d08c18d-881b-480f-9e8f-f94359cef17e.png">
+
+
