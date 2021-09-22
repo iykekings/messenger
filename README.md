@@ -24,7 +24,7 @@ Features:
 
 - Realtime messaging between users
 - Know when a user leaves the chat/disconnects
-- TODO: #1 know when another user is typing
+- Know when another user is typing
 - Frontend under 125KB
 - Well typed socket servers and clients on both FE and BE
 - Super fast compilation/recompilation times
