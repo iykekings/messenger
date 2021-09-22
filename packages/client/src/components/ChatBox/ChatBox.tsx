@@ -14,8 +14,21 @@ import Message from '../Message/Message';
 import UserList from '../UserList/UserList';
 
 const ChatBox = () => {
-  const { messages, join, sendMessageToUser, users, auth } = useSocket();
+  const {
+    messages,
+    join,
+    sendMessageToUser,
+    users,
+    auth,
+    typing,
+    stopTyping,
+    usersTyping,
+  } = useSocket();
   const [currentChatId, setCurrentChatId] = useState<string>(users[0]?.uuid);
+
+  const typingState = useMemo(() => {
+    return usersTyping[currentChatId];
+  }, [usersTyping, currentChatId]);
 
   const chatMessages = useMemo(() => {
     return messages.filter(
@@ -85,6 +98,9 @@ const ChatBox = () => {
           ))}
           <div className="chat-spacer" ref={spacer}></div>
         </div>
+        <div className="typing" style={{ marginLeft: "1rem" }}>
+          {typingState && <i>{currentChat?.name} is typing </i>}
+        </div>
         <form onSubmit={handleSubmit} id="chat-form">
           <input
             type="text"
@@ -100,6 +116,10 @@ const ChatBox = () => {
               rows={3}
               placeholder="Type message and click send"
               value={text}
+              onFocus={() => {
+                typing(currentChatId);
+              }}
+              onBlur={() => stopTyping(currentChatId)}
               onChange={(e) => setText(e.currentTarget.value)}
             />
           )}

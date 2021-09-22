@@ -78,13 +78,13 @@ export const SocketProvider = ({ children }: { children: JSX.Element }) => {
     socket.on("userTyping", (id) => {
       setUsersTyping((pre) => {
         pre[id] = true;
-        return pre;
+        return { ...pre };
       });
     });
     socket.on("userStoppedTyping", (id) => {
       setUsersTyping((pre) => {
         pre[id] = false;
-        return pre;
+        return { ...pre };
       });
     });
     socket.on("userLeft", (msg) => setMessages((preMsgs) => [...preMsgs, msg]));
